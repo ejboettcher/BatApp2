@@ -24,6 +24,10 @@ public class MainActivity extends AppCompatActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent2=new Intent("android.location.GPS_ENABLED_CHANGE");
+                intent2.putExtra("enabled", true);
+                sendBroadcast(intent2);
+
                 Intent intent = new Intent (getBaseContext(), MapsActivity.class);
                 startActivity(intent);
             }
