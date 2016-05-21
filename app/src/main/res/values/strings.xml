@@ -2,5 +2,6 @@
     <string name="app_name">BatApp2</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
+    <string name="gps_request">Please turn on GPS</string>
   
 </resources>
