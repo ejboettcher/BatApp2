@@ -1,12 +1,14 @@
 package com.didactex.www.batapp2;
 
 import android.content.Context;
+import android.location.Address;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Button;
 
-import com.google.android.gms.location.LocationListener;
+import java.util.Locale;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -15,18 +17,28 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.location.LocationListener;
+
+
+import android.location.Geocoder;
 import android.content.Intent;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.model.Marker;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.io.IOException;
+import java.util.List;
 
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    public  Geocoder   geocoder ;
     private GoogleMap mMap;
     private Marker mapMarker;
     public  String      pintitle;
-    public  LatLng      ExifPos     = new LatLng(0,0);
+    public  LatLng      ExifPos     = new LatLng(39.759444, -84.191667);
     public  double      Longitude   = 0;
     public  double      Latitude    = 0;
     public Integer      TFsave = 0;
+    public String       MarkAddress;
     protected LocationManager locationManager;
     protected LocationListener locationListener;
     protected boolean gps_enabled,network_enabled;
@@ -41,12 +53,58 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         Button TakePhoto =(Button)findViewById(R.id.CameraButton);
-
+        geocoder                = new Geocoder(this, Locale.ENGLISH);
       // locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
        // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
     }
 
+    public class AsyncTaskgetMyLocationAddress extends AsyncTask< LatLng, String, String>{
+    /// /(double Latitude, double Longitude) {
+    //Get address in background
+    @Override
+            protected void onPreExecute(){}
+    @Override
+    protected String doInBackground(LatLng... arg0) {
+        String mAddress=" ";
+        Boolean geoTH = geocoder.isPresent();
+        LatLng ll = arg0[0];
+        mAddress = Boolean.toString(geoTH);
+        if (geoTH) {
+            try {
+                //Place your latitude and longitude
+                List<Address> addresses = geocoder.getFromLocation(Latitude, Longitude, 2);
+                //if (addresses!=null)
+                if (addresses.size() > 0) {
+                    Address fetchedAddress = addresses.get(0);
+                    StringBuilder strAddress = new StringBuilder();
+                    for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
+                        if (i == 1) {
+                            strAddress.append(fetchedAddress.getAddressLine(i)).append(" \n ");
+                        } else {
+                            strAddress.append(fetchedAddress.getAddressLine(i)).append("  ");
+                        }
+                    }
+                    mAddress = strAddress.toString();
+                } else {
+                    mAddress = "No location found..!";
+                }
+            } catch (IOException e) {
+                mAddress = "No Address.  Enter new one here.";
+
+                Toast.makeText(getApplicationContext(), "Could not get address..!", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
+        return mAddress;
+    }
+        @Override
+        protected void onPostExecute(String mAddress){
+            mapMarker.setSnippet(mAddress);
+            mapMarker.showInfoWindow();
+        }
+
+    }
 
     /**
      * Manipulates the map once available.
@@ -60,6 +118,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        setMapMarker(ExifPos);
      }
 
     private void setUpMap() {
@@ -69,7 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void setMapMarker(LatLng pos) {
         // map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
-        mMap.clear();
+       mMap.clear();
         // Set the Marker up
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(pos);
@@ -83,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 pintitle = "No Location Information.";
 
             } else {
-                pintitle = "Photo was taken here.";
+                pintitle = "You are Here.";
             }
             markerOptions.title(pintitle);
             markerOptions.snippet("Drag to change location.");
@@ -111,11 +170,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng newpos   = ImMark.getPosition();
                     Latitude        = newpos.latitude;
                     Longitude       = newpos.longitude;
-                    mapMarker.setTitle("Target location");
-                    mapMarker.setSnippet("Drag marker to location");
-                    mapMarker.showInfoWindow();
+                    mapMarker.setTitle("Target location"+ Double.toString(Latitude));
                     ExifPos         = new LatLng(Latitude, Longitude);
                     TFsave = 1;
+                    new AsyncTaskgetMyLocationAddress().execute(ExifPos);
+                    //getMyLocationAddress(Latitude, Longitude);
+                    MarkAddress = "Latitude: " + Double.toString(Latitude) + " Longitude: " +Double.toString(Longitude);
+                    mapMarker.setSnippet(MarkAddress);
+                    mapMarker.showInfoWindow();
                 }
             });
 
@@ -130,6 +192,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             TFsave = 0;
         }
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+    protected void onPause() {
+        super.onPause();
+        // mImageFetcher.setExitTasksEarly(true);
+        // mImageFetcher.flushCache();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
     }
 }
