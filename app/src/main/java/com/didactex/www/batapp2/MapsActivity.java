@@ -7,9 +7,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import android.database.Cursor;
+
 import android.content.Intent;
 import com.google.android.gms.maps.model.Marker;
 
@@ -17,6 +18,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private Marker mapMarker;
+    public  String      pintitle;
+    public  LatLng      ExifPos     = new LatLng(0,0);
+    public  double      Longitude   = 0;
+    public  double      Latitude    = 0;
+    public Integer      TFsave = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +52,77 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+     }
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    private void setUpMap() {
+        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Target Marker"));
+    }
+
+    public void setMapMarker(LatLng pos) {
+        // map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+
+        mMap.clear();
+        // Set the Marker up
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(pos);
+        if (TFsave == 0) {
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                    pos).zoom(12).build();
+
+            if (pos.latitude == 0) {
+                cameraPosition = new CameraPosition.Builder().target(
+                        pos).zoom(1).build();
+                pintitle = "No Location Information.";
+
+            } else {
+                pintitle = "Photo was taken here.";
+            }
+            markerOptions.title(pintitle);
+            markerOptions.snippet("Drag to change location.");
+            mapMarker = mMap.addMarker(markerOptions);
+            mapMarker.setDraggable(true);
+            mapMarker.showInfoWindow();
+
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDragStart(Marker ImMark) {
+                    mapMarker.setTitle(pintitle);
+                    mapMarker.setSnippet("Drag Market to location");
+                    mapMarker.showInfoWindow();
+                }
+
+                @Override
+                public void onMarkerDrag(Marker ImMark) {
+                    mapMarker.setSnippet("Target location may not be your location");
+                    mapMarker.setTitle("Target location");
+                    mapMarker.showInfoWindow();
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker ImMark) {
+                    LatLng newpos   = ImMark.getPosition();
+                    Latitude        = newpos.latitude;
+                    Longitude       = newpos.longitude;
+                    mapMarker.setTitle("Target location");
+                    mapMarker.setSnippet("Drag marker to location");
+                    mapMarker.showInfoWindow();
+                    ExifPos         = new LatLng(Latitude, Longitude);
+                    TFsave = 1;
+                }
+            });
+
+        } else {
+            markerOptions.title("Target Location");
+            markerOptions.snippet("Drag to change.");
+            final Marker ImMarker = mMap.addMarker(markerOptions);
+            mapMarker.setDraggable(true);
+            mapMarker.showInfoWindow();
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                    pos).zoom(12).build();
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            TFsave = 0;
+        }
+
     }
 }
