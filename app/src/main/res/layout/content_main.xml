@@ -15,5 +15,8 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/hlpBtn" />
+        android:id="@+id/hlpBtn"
+        android:src="@mipmap/help911"
+        android:scaleType="fitCenter"
+        android:background="#ffffff" />
 </RelativeLayout>
