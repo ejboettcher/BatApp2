@@ -18,5 +18,6 @@
         android:id="@+id/hlpBtn"
         android:src="@mipmap/help911"
         android:scaleType="fitCenter"
-        android:background="#ffffff" />
+        android:background="#ffffff"
+        android:layout_marginBottom="50dp" />
 </RelativeLayout>
