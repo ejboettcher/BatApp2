@@ -1,8 +1,12 @@
 package com.didactex.www.batapp2;
 
+import android.content.Context;
+import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Button;
+
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -23,8 +27,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public  double      Longitude   = 0;
     public  double      Latitude    = 0;
     public Integer      TFsave = 0;
-
-
+    protected LocationManager locationManager;
+    protected LocationListener locationListener;
+    protected boolean gps_enabled,network_enabled;
+    protected Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +42,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Button TakePhoto =(Button)findViewById(R.id.CameraButton);
 
+      // locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+       // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
     }
 
@@ -82,7 +90,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mapMarker = mMap.addMarker(markerOptions);
             mapMarker.setDraggable(true);
             mapMarker.showInfoWindow();
-
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                 @Override
