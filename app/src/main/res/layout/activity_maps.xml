@@ -11,28 +11,41 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_gravity="center|center"
+        android:gravity="center"
         android:orientation="horizontal"
         android:background="@color/wallet_holo_blue_light"
         >
+        <Button
+            android:layout_width="85dp"
+            android:layout_height="120dp"
+            android:background="@mipmap/status_sent"
+            android:layout_margin   = "20dp"
+            />
         <!--
         <fragment android:id        = "@+id/StatusBut"
             android:layout_width    = "50dp"
             android:layout_height   = "120dp"
             class="com.didactex.www.batapp2.statusFragment"
-            android:layout_weight   = "1"
+            android:background="@mipmap/status_sent"
             android:layout_margin   = "10dp"
+
 
             >
 
         </fragment>
+
 -->
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" >
+        </Space>
         <Button android:id="@+id/CameraButton"
-            android:layout_width="50dp"
-            android:layout_height="120dp"
-            android:layout_weight   = "1"
-            android:layout_margin   = "10dp"
-            android:text            = "Take Picture"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+
+            android:layout_margin   = "20dp"
+            android:background="@mipmap/cameraicon"
 
             android:onClick         = "ClickCameraButton">
 
@@ -41,15 +54,44 @@
 
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/map"
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="300dp"
     tools:context=".MapsActivity" />
+<LinearLayout android:id="@+id/PlaceHolderforsmsfrag"
+    android:layout_width="249dp"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="wrap_content"
+        android:minWidth="250dp"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:text="New Text"
+        android:id="@+id/sampleView"
+        android:layout_gravity="center"
+        android:background="@color/abc_secondary_text_material_dark" />
+
+
+
+
+    <Button
+
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:id="@+id/sendbutton"
+
+        android:layout_gravity="right"
+        android:background="@android:color/holo_red_light"
+        android:elegantTextHeight="true"
+        android:textColor="@color/background_floating_material_light"
+        android:textSize="16sp" />
+</LinearLayout>
     <!--
-    <fragment android:id          = "@+id/button_panel"
+    <fragment android:id          = "@+id/smsfragment"
 android:layout_width    = "match_parent"
 android:layout_height   = "75dp"
 android:layout_margin   = "15dp"
