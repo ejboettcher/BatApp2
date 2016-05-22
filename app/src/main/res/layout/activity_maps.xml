@@ -28,13 +28,9 @@
             class="com.didactex.www.batapp2.statusFragment"
             android:background="@mipmap/status_sent"
             android:layout_margin   = "10dp"
-
-
             >
 
-        </fragment>
-
--->
+        </fragment>-->
         <Space
             android:layout_width="0dp"
             android:layout_height="1dp"
@@ -49,47 +45,47 @@
 
             android:onClick         = "ClickCameraButton">
 
-    </Button>
+         </Button>
     </LinearLayout>
 
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/map"
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="300dp"
     tools:context=".MapsActivity" />
-<LinearLayout android:id="@+id/PlaceHolderforsmsfrag"
-    android:layout_width="249dp"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-    <TextView
-        android:layout_width="wrap_content"
-        android:minWidth="250dp"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:text="New Text"
-        android:id="@+id/sampleView"
-        android:layout_gravity="center"
-        android:background="@color/abc_secondary_text_material_dark" />
 
-
-
-
-    <Button
-
-        android:layout_width="75dp"
+    <LinearLayout android:id="@+id/PlaceHolderforsmsfrag"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send"
-        android:id="@+id/sendbutton"
+        android:orientation="horizontal"
+        android:background="@android:color/transparent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:minWidth="250dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:minLines="3"
+            android:textSize="14sp"
+            android:text="sos Text"
+            android:id="@+id/sample_view"
+            android:gravity="left"
+            android:background="@android:color/white" />
+        <Button
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:text   = "Send"
+            android:id     = "@+id/sendbutton"
+            android:layout_gravity="end"
+            android:background="@android:color/holo_red_light"
 
-        android:layout_gravity="right"
-        android:background="@android:color/holo_red_light"
-        android:elegantTextHeight="true"
-        android:textColor="@color/background_floating_material_light"
-        android:textSize="16sp" />
-</LinearLayout>
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+    </LinearLayout>
     <!--
     <fragment android:id          = "@+id/smsfragment"
 android:layout_width    = "match_parent"
@@ -100,4 +96,4 @@ class="com.didactex.www.batapp2.smsfieldFragment"
     >
 </fragment>
 -->
-    </LinearLayout>
+</LinearLayout>
