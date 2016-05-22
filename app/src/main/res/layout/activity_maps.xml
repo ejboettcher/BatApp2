@@ -6,8 +6,8 @@
     android:layout_height   = "match_parent"
     android:orientation     = "vertical"
     android:gravity         = "center|top"
-    android:background      = "@color/wallet_holo_blue_light"
-    >
+    android:background      = ""
+    android:weightSum="1">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
@@ -60,26 +60,32 @@
 
     <LinearLayout android:id="@+id/PlaceHolderforsmsfrag"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:background="@android:color/transparent">
+        android:background="@android:color/transparent"
+        android:layout_gravity="center_horizontal">
         <TextView
-            android:layout_width="wrap_content"
-            android:minWidth="250dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:minLines="3"
-            android:textSize="14sp"
-            android:text="sos Text"
-            android:id="@+id/sample_view"
-            android:gravity="left"
-            android:background="@android:color/white" />
+            android:layout_width    ="0dp"
+            android:minWidth        ="250dp"
+            android:layout_height   ="match_parent"
+            android:layout_margin   ="10dp"
+            android:minLines        ="3"
+            android:lines="10"
+            android:textSize        ="15sp"
+            android:text            ="Your SMS Message"
+            android:id              ="@+id/sample_view"
+            android:gravity         ="left"
+            android:background      ="@android:color/white"
+            android:ellipsize       ="none"
+            android:scrollHorizontally  ="false"
+            android:layout_gravity  ="center_vertical"
+            android:layout_weight   ="1"/>
         <Button
             android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:text   = "Send"
             android:id     = "@+id/sendbutton"
-            android:layout_gravity="end"
+            android:layout_gravity="center_vertical|right|end"
             android:background="@android:color/holo_red_light"
 
             android:textColor="@android:color/white"

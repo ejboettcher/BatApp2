@@ -2,8 +2,11 @@ package com.didactex.www.batapp2;
 
 import android.content.Context;
 import android.location.Address;
+import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Button;
@@ -16,12 +19,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
+import android.util.Log;
 import android.location.LocationListener;
 
 
 import android.location.Geocoder;
 import android.content.Intent;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Marker;
@@ -42,7 +46,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected LocationManager locationManager;
     protected LocationListener locationListener;
     protected boolean gps_enabled,network_enabled;
-    protected Context context;
+    public String basetext = "Emergency at ";
+    public TextView SMSFeed;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,10 +59,88 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Button TakePhoto =(Button)findViewById(R.id.CameraButton);
         geocoder                = new Geocoder(this, Locale.ENGLISH);
-      // locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-       // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        ExifPos = getLocation();
+        SMSFeed = (TextView)findViewById(R.id.sample_view);
+        //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
     }
+    //http://stackoverflow.com/questions/3470693/android-get-location-or-prompt-to-enable-location-service-if-disabled
+    //https://examples.javacodegeeks.com/android/core/location/android-location-based-services-example/
+    private LatLng getLocation() throws SecurityException {
+        //http://stackoverflow.com/questions/17591147/how-to-get-current-location-in-android
+        Location location;
+        Latitude = 0;
+        Longitude = 0;
+        // flag for GPS status
+        boolean isGPSEnabled = false;
+        // flag for network status
+        boolean isNetworkEnabled = false;
+        try {
+            locationManager = (LocationManager) this
+                    .getSystemService(Context.LOCATION_SERVICE);
+
+            // getting GPS status
+            isGPSEnabled = locationManager
+                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            Log.v("isGPSEnabled", "=" + isGPSEnabled);
+
+            // getting network status
+            isNetworkEnabled = locationManager
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+            Log.v("isNetworkEnabled", "=" + isNetworkEnabled);
+
+            if (isGPSEnabled == false && isNetworkEnabled == false) {
+                // no network provider is enabled
+            } else {
+                if (isNetworkEnabled) {
+                    location=null;
+                    locationManager.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER,
+                            20000,
+                            200, this.locationListener);
+                    Log.d("Network", "Network");
+                    if (locationManager != null) {
+                        location = locationManager
+                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (location != null) {
+                            Latitude = location.getLatitude();
+                            Longitude = location.getLongitude();
+                        }
+                    }
+                }
+                // if GPS Enabled get lat/long using GPS Services
+                if (isGPSEnabled) {
+                    Toast.makeText(this,"MADE it HERE",Toast.LENGTH_LONG);
+                    location=null;
+                    if (location == null) {
+                        locationManager.requestLocationUpdates(
+                                LocationManager.GPS_PROVIDER,
+                                20000,
+                                200, this.locationListener);
+                        Log.d("GPS Enabled", "GPS Enabled");
+                        if (locationManager != null) {
+                            location = locationManager
+                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if (location != null) {
+                                Toast.makeText(this,"Have Location",Toast.LENGTH_LONG);
+                                Latitude = location.getLatitude();
+                                Longitude = location.getLongitude();
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new LatLng(Latitude, Longitude);
+    }
+
+
 
     public class AsyncTaskgetMyLocationAddress extends AsyncTask< LatLng, String, String>{
     /// /(double Latitude, double Longitude) {
@@ -102,6 +185,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         protected void onPostExecute(String mAddress){
             mapMarker.setSnippet(mAddress);
             mapMarker.showInfoWindow();
+            SMSFeed.setText(basetext+mAddress);
+
+
         }
 
     }
@@ -134,7 +220,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.position(pos);
         if (TFsave == 0) {
             CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                    pos).zoom(12).build();
+                    pos).zoom(16).build();
 
             if (pos.latitude == 0) {
                 cameraPosition = new CameraPosition.Builder().target(
@@ -209,4 +295,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onDestroy();
 
     }
+    protected void onStart() {
+
+        super.onStart();
+    }
+
+    protected void onStop() {
+
+        super.onStop();
+    }
+    // Create an instance of GoogleAPIClient.
+
+
 }
