@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Button;
 
+import java.text.DecimalFormat;
 import java.util.Locale;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,12 +23,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.util.Log;
 import android.location.LocationListener;
 
-
 import android.location.Geocoder;
 import android.content.Intent;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.model.Marker;
 
 import java.io.IOException;
@@ -48,6 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected boolean gps_enabled,network_enabled;
     public String basetext = "Emergency at ";
     public TextView SMSFeed;
+    public DecimalFormat df = new DecimalFormat("#.##");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Button TakePhoto =(Button)findViewById(R.id.CameraButton);
         geocoder                = new Geocoder(this, Locale.ENGLISH);
-        ExifPos = getLocation();
+
         SMSFeed = (TextView)findViewById(R.id.sample_view);
         //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -69,74 +69,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //https://examples.javacodegeeks.com/android/core/location/android-location-based-services-example/
     private LatLng getLocation() throws SecurityException {
         //http://stackoverflow.com/questions/17591147/how-to-get-current-location-in-android
+        Toast.makeText(MapsActivity.this,"in getLocation",Toast.LENGTH_LONG).show();
         Location location;
-        Latitude = 0;
-        Longitude = 0;
+        Latitude    = 0;
+        Longitude   = 0;
         // flag for GPS status
         boolean isGPSEnabled = false;
-        // flag for network status
-        boolean isNetworkEnabled = false;
-        try {
-            locationManager = (LocationManager) this
-                    .getSystemService(Context.LOCATION_SERVICE);
 
-            // getting GPS status
-            isGPSEnabled = locationManager
-                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-            Log.v("isGPSEnabled", "=" + isGPSEnabled);
+            Toast.makeText(this,"In try",Toast.LENGTH_LONG).show();
+            locationManager = (LocationManager) MapsActivity.this.getSystemService(Context.LOCATION_SERVICE);
 
-            // getting network status
-            isNetworkEnabled = locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-            Log.v("isNetworkEnabled", "=" + isNetworkEnabled);
-
-            if (isGPSEnabled == false && isNetworkEnabled == false) {
-                // no network provider is enabled
-            } else {
-                if (isNetworkEnabled) {
-                    location=null;
-                    locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER,
-                            20000,
-                            200, this.locationListener);
-                    Log.d("Network", "Network");
-                    if (locationManager != null) {
-                        location = locationManager
-                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (location != null) {
-                            Latitude = location.getLatitude();
-                            Longitude = location.getLongitude();
-                        }
-                    }
-                }
-                // if GPS Enabled get lat/long using GPS Services
-                if (isGPSEnabled) {
-                    Toast.makeText(this,"MADE it HERE",Toast.LENGTH_LONG);
-                    location=null;
-                    if (location == null) {
-                        locationManager.requestLocationUpdates(
-                                LocationManager.GPS_PROVIDER,
-                                20000,
-                                200, this.locationListener);
-                        Log.d("GPS Enabled", "GPS Enabled");
-                        if (locationManager != null) {
-                            location = locationManager
-                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (location != null) {
-                                Toast.makeText(this,"Have Location",Toast.LENGTH_LONG);
-                                Latitude = location.getLatitude();
-                                Longitude = location.getLongitude();
-                            }
-                        }
-                    }
+            if (locationManager != null) {
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    Toast.makeText(this,"Have Location",Toast.LENGTH_LONG).show();
+                    Latitude = location.getLatitude();
+                    Longitude = location.getLongitude();
                 }
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        // Remove the listener you previously added
+
         return new LatLng(Latitude, Longitude);
     }
 
@@ -204,12 +159,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+       // ExifPos = getLocation();
         setMapMarker(ExifPos);
      }
 
-    private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Target Marker"));
-    }
+   // private void setUpMap() {
+    //    mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Target Marker"));
+   // }
 
     public void setMapMarker(LatLng pos) {
         // map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
@@ -218,6 +174,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Set the Marker up
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(pos);
+        TFsave = 0; //Boolean to keep the marker updating status without user input.
         if (TFsave == 0) {
             CameraPosition cameraPosition = new CameraPosition.Builder().target(
                     pos).zoom(16).build();
@@ -256,13 +213,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng newpos   = ImMark.getPosition();
                     Latitude        = newpos.latitude;
                     Longitude       = newpos.longitude;
-                    mapMarker.setTitle("Target location"+ Double.toString(Latitude));
+                    mapMarker.setTitle("Target Location" );
                     ExifPos         = new LatLng(Latitude, Longitude);
                     TFsave = 1;
                     new AsyncTaskgetMyLocationAddress().execute(ExifPos);
                     //getMyLocationAddress(Latitude, Longitude);
-                    MarkAddress = "Latitude: " + Double.toString(Latitude) + " Longitude: " +Double.toString(Longitude);
-                    mapMarker.setSnippet(MarkAddress);
+                    //MarkAddress = "Latitude: " + df.format(Latitude) + " Longitude: " +df.format(Longitude);
+                    //mapMarker.setSnippet(MarkAddress);
                     mapMarker.showInfoWindow();
                 }
             });

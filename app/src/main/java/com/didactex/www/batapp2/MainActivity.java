@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // getting GPS status
 
-                turnOnGPS();
+              // turnOnGPS();
                 //Intent intent2=new Intent("android.location.GPS_ENABLED_CHANGE");
                // intent2.putExtra("enabled", true);
                 //sendBroadcast(intent2);
