@@ -48,10 +48,12 @@ public class MainActivity extends AppCompatActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // getting GPS status
+
                 turnOnGPS();
-                Intent intent2=new Intent("android.location.GPS_ENABLED_CHANGE");
-                intent2.putExtra("enabled", true);
-                sendBroadcast(intent2);
+                //Intent intent2=new Intent("android.location.GPS_ENABLED_CHANGE");
+               // intent2.putExtra("enabled", true);
+                //sendBroadcast(intent2);
 
                 Intent intent = new Intent (getBaseContext(), MapsActivity.class);
                 startActivity(intent);
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
 
         String providerName = locationManager.getBestProvider(locationCritera, true);
-
+        //Boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (providerName != null && locationManager.isProviderEnabled(providerName)) {
             // Provider is enabled
             locationManager.requestLocationUpdates(providerName, 20000, 100, MainActivity.this.locationListener);
